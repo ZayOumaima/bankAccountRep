@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kata.bankAccount.entities.Account;
 import com.kata.bankAccount.repositories.AccountRepository;
+import com.kata.bankAccount.utils.ExceptionMessages;
 
 @RestController
 @RequestMapping("/kata/bankAccount/account")
@@ -25,7 +26,7 @@ public class AccountController {
 		Account createdAccount=null;
 		try {
 			if (newAccount == null) {
-				throw new Exception("Cannot create Account with empty fields");
+				throw new Exception(ExceptionMessages.EMPTY_ACCOUNT_CREATION_ERROR);
 			}else {
 				
 			}
@@ -38,7 +39,7 @@ public class AccountController {
 	@GetMapping("/{id}")
 	public ResponseEntity getAccountById(@PathVariable(value = "id") Long accountId) {
         if (accountId == null) {
-            return ResponseEntity.badRequest().body("Cannot retrieve account with null ID");
+            return ResponseEntity.badRequest().body(ExceptionMessages.NULL_ID_ACCOUNT_RETRIEVE_ERROR);
         }
     	Account account = accountRepository.getOne(accountId);
         if (account == null) {

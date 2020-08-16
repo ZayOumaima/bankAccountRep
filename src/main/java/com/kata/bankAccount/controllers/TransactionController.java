@@ -13,6 +13,7 @@ import com.kata.bankAccount.entities.Account;
 import com.kata.bankAccount.entities.Transaction;
 import com.kata.bankAccount.repositories.AccountRepository;
 import com.kata.bankAccount.repositories.TransactionRepository;
+import com.kata.bankAccount.utils.ExceptionMessages;
 import com.kata.bankAccount.utils.TypeTransaction;
 
 
@@ -35,10 +36,10 @@ public class TransactionController {
 	 Transaction createdTransaction=null;
 		try {
 			if (newTransaction == null) {
-				throw new Exception("Cannot create new Transaction with empty fields");
+				throw new Exception(ExceptionMessages.EMPTY_TRANSACTION_CREATION_ERROR);
 			}else {
-				if(newTransaction.getTransactionType().equals(TypeTransaction.deposit) && newTransaction.getAmount()<0) {
-					throw new Exception("Cannot deposit a negative amount");
+				if(newTransaction.getAmount() <0) {
+					throw new Exception(ExceptionMessages.NEGATIVE_AMOUNT_ERROR);
 				}
 			}
 			 createdTransaction = transactionRepository.save(newTransaction);

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kata.bankAccount.entities.Client;
 import com.kata.bankAccount.repositories.ClientRepository;
+import com.kata.bankAccount.utils.ExceptionMessages;
 
 @RestController
 @RequestMapping("/kata/bankAccount/client")
@@ -26,7 +27,7 @@ public class ClientController {
 		Client createdClient = null;
 		try {
 			if (newClient == null) {
-				throw new Exception("Cannot create client with empty fields");
+				throw new Exception(ExceptionMessages.EMPTY_CLIENT_CREATION_ERROR);
 			}
 			createdClient = clientRepository.save(newClient);
 		} catch (Exception e) {
@@ -38,7 +39,7 @@ public class ClientController {
 	@GetMapping("/{id}")
 	public ResponseEntity getClientById(@PathVariable(value = "id") Long clientId) {
         if (clientId == null) {
-            return ResponseEntity.badRequest().body("Cannot retrieve client with null ID");
+            return ResponseEntity.badRequest().body(ExceptionMessages.NULL_ID_CLIENT_RETRIEVE_ERROR);
         }
     	Client client = clientRepository.getOne(clientId);
         if (client == null) {
