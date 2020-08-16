@@ -9,7 +9,6 @@ import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -25,7 +24,11 @@ class BankAccountApplicationTests {
 	private TestRestTemplate restTemplate;
 
 	private static final String SERVER_PORT = "8082";
-
+	private static final String CLIENT_NAME = "Oumaima";
+	private static final String CLIENT_FULL_NAME = "OumaimaZAYANI";
+	private static final String CLIENT_PATH = "/client/";
+	private static final String ACCOUNT_PATH = "/account/";
+	private static final String TRANSACTION_PATH = "/transaction/";
 	private String getRootUrl() {
 		return "http://localhost:" + SERVER_PORT + "/kata/bankAccount";
 	}
@@ -36,11 +39,11 @@ class BankAccountApplicationTests {
 	 */
 	public void testCreateClient() {
 		Client c = new Client();
-		c.setName("Oumaima");
-		ResponseEntity<Client> postResponse = restTemplate.postForEntity(getRootUrl() + "/client/", c, Client.class);
+		c.setName(CLIENT_NAME);
+		ResponseEntity<Client> postResponse = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH, c, Client.class);
 		Assert.assertNotNull(postResponse);
 		Assert.assertNotNull(postResponse.getBody());
-		Assert.assertEquals("Oumaima", postResponse.getBody().getName());
+		Assert.assertEquals(CLIENT_NAME, postResponse.getBody().getName());
 	}
 
 	@Test
@@ -49,14 +52,14 @@ class BankAccountApplicationTests {
 	 */
 	public void testGetClientById() {
 		Client c = new Client();
-		c.setName("Oumaima");
-		ResponseEntity<Client> postResponse = restTemplate.postForEntity(getRootUrl() + "/client/", c, Client.class);
+		c.setName(CLIENT_NAME);
+		ResponseEntity<Client> postResponse = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH, c, Client.class);
 		// get the created client above
-		Client client = restTemplate.getForObject(getRootUrl() + "/client/" + postResponse.getBody().getId(),
+		Client client = restTemplate.getForObject(getRootUrl() + CLIENT_PATH + postResponse.getBody().getId(),
 				Client.class);
 
 		Assert.assertNotNull(client);
-		Assert.assertEquals("Oumaima", client.getName());
+		Assert.assertEquals(CLIENT_NAME, client.getName());
 	}
 
 	@Test
@@ -66,22 +69,22 @@ class BankAccountApplicationTests {
 	public void testCreateAccount() {
 		// create New Client
 		Client clientToCreate = new Client();
-		clientToCreate.setName("OumaimaZAY");
-		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + "/client/",
+		clientToCreate.setName(CLIENT_NAME);
+		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
 				clientToCreate, Client.class);
 		// create New Account
 		Account account = new Account();
 		// get the created client above
 		Client client = restTemplate
-				.getForObject(getRootUrl() + "/client/" + postResponseCreateClient.getBody().getId(), Client.class);
+				.getForObject(getRootUrl() + CLIENT_PATH + postResponseCreateClient.getBody().getId(), Client.class);
 		// set the account client
 		account.setClient(client);
 		account.setCurrentBalance(0);
-		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + "/account/",
+		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + ACCOUNT_PATH,
 				account, Account.class);
 		Assert.assertNotNull(postResponseCreateAccount);
 		Assert.assertNotNull(postResponseCreateAccount.getBody());
-		Assert.assertEquals("OumaimaZAY", postResponseCreateAccount.getBody().getClient().getName());
+		Assert.assertEquals(CLIENT_NAME, postResponseCreateAccount.getBody().getClient().getName());
 		Assert.assertEquals(0.0, postResponseCreateAccount.getBody().getCurrentBalance(), 0.0);
 	}
 
@@ -92,62 +95,62 @@ class BankAccountApplicationTests {
 	public void testGetAccountById() {
 		// create New Client
 		Client clientToCreate = new Client();
-		clientToCreate.setName("Oumaima");
-		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + "/client/",
+		clientToCreate.setName(CLIENT_NAME);
+		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
 				clientToCreate, Client.class);
 		// create New Account
 		Account newAccount = new Account();
 		// get the created client above
 		Client client = restTemplate
-				.getForObject(getRootUrl() + "/client/" + postResponseCreateClient.getBody().getId(), Client.class);
+				.getForObject(getRootUrl() + CLIENT_PATH + postResponseCreateClient.getBody().getId(), Client.class);
 		// set the account client
 		newAccount.setClient(client);
 		newAccount.setCurrentBalance(0);
-		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + "/account/",
+		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + ACCOUNT_PATH,
 				newAccount, Account.class);
 		// get the account created above
 		Account account = restTemplate.getForObject(
-				getRootUrl() + "/account/" + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
+				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
 		Assert.assertNotNull(account);
-		Assert.assertEquals("Oumaima", account.getClient().getName());
+		Assert.assertEquals(CLIENT_NAME, account.getClient().getName());
 		Assert.assertEquals(0.0, account.getCurrentBalance(), 0.0);
 	}
 
 	@Test
 	/**
-	 * test make a deposit in an account with success
+	 * test make a deposit in an account with success US1
 	 */
 	public void testMakeAccountDepositSuccess() {
 		// create New Client
 		Client clientToCreate = new Client();
-		clientToCreate.setName("OumaimaZAYANIS");
-		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + "/client/",
+		clientToCreate.setName(CLIENT_FULL_NAME);
+		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
 				clientToCreate, Client.class);
 		// create New Account
 		Account accountToCreate = new Account();
 		// get the client created above
 		Client client = restTemplate
-				.getForObject(getRootUrl() + "/client/" + postResponseCreateClient.getBody().getId(), Client.class);
+				.getForObject(getRootUrl() + CLIENT_PATH + postResponseCreateClient.getBody().getId(), Client.class);
 		// set the account client
 		accountToCreate.setClient(client);
 		accountToCreate.setCurrentBalance(0);
-		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + "/account/",
+		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + ACCOUNT_PATH,
 				accountToCreate, Account.class);
 		// create New Transaction
 		Transaction trans = new Transaction();
 		trans.setTransactionDate(new Date());
 		// get the account created above
 		Account account = restTemplate.getForObject(
-				getRootUrl() + "/account/" + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
+				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
 		// set the transaction account
 		trans.setAccount(account);
 		trans.setTransactionType(TypeTransaction.deposit);
 		trans.setAmount(500);
-		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + "/transaction/", trans,
+		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, trans,
 				Transaction.class);
 		Assert.assertNotNull(postResponse);
 		Assert.assertNotNull(postResponse.getBody());
-		Assert.assertEquals("OumaimaZAYANI", postResponse.getBody().getAccount().getClient().getName());
+		Assert.assertEquals(CLIENT_FULL_NAME, postResponse.getBody().getAccount().getClient().getName());
 		Assert.assertEquals(500, postResponse.getBody().getAmount(), 0.0);
 		Assert.assertEquals(500, postResponse.getBody().getAccount().getCurrentBalance(), 0.0);
 
@@ -155,37 +158,113 @@ class BankAccountApplicationTests {
 
 	@Test
 	/**
-	 * test failing make a deposit in an account
+	 * test failing make a deposit in an account US1
 	 */
 	public void testMakeAccountDepositFail() {
 		// create New Client
 		Client clientToCreate = new Client();
-		clientToCreate.setName("OumaimaZAYANIF");
-		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + "/client/",
+		clientToCreate.setName(CLIENT_FULL_NAME);
+		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
 				clientToCreate, Client.class);
 		// create New Account
 		Account accountToCreate = new Account();
 		// get the client created above
 		Client client = restTemplate
-				.getForObject(getRootUrl() + "/client/" + postResponseCreateClient.getBody().getId(), Client.class);
+				.getForObject(getRootUrl() + CLIENT_PATH + postResponseCreateClient.getBody().getId(), Client.class);
 		// set the account client
 		accountToCreate.setClient(client);
 		accountToCreate.setCurrentBalance(0);
-		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + "/account/",
+		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + ACCOUNT_PATH,
 				accountToCreate, Account.class);
 		// create New Transaction
 		Transaction trans = new Transaction();
 		trans.setTransactionDate(new Date());
 		// get the account created above
 		Account account = restTemplate.getForObject(
-				getRootUrl() + "/account/" + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
+				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
 		// set the transaction account
 		trans.setAccount(account);
 		trans.setTransactionType(TypeTransaction.deposit);
 		trans.setAmount(-500);
-		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + "/transaction/", trans,
+		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, trans,
 				Transaction.class);
 		Assert.assertNotNull(postResponse);
 		Assert.assertNull(postResponse.getBody());
 	}
+	@Test
+	/**
+	 * test make a withdrawal from an account with success US2
+	 */
+	public void testMakeAccountWithdrawalSuccess() {
+		// create New Client
+		Client clientToCreate = new Client();
+		clientToCreate.setName(CLIENT_FULL_NAME);
+		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
+				clientToCreate, Client.class);
+		// create New Account
+		Account accountToCreate = new Account();
+		// get the client created above
+		Client client = restTemplate
+				.getForObject(getRootUrl() + CLIENT_PATH + postResponseCreateClient.getBody().getId(), Client.class);
+		// set the account client
+		accountToCreate.setClient(client);
+		accountToCreate.setCurrentBalance(1000);
+		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + ACCOUNT_PATH,
+				accountToCreate, Account.class);
+		// create New Transaction
+		Transaction trans = new Transaction();
+		trans.setTransactionDate(new Date());
+		// get the account created above
+		Account account = restTemplate.getForObject(
+				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
+		// set the transaction account
+		trans.setAccount(account);
+		trans.setTransactionType(TypeTransaction.withdrawal);
+		trans.setAmount(200);
+		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, trans,
+				Transaction.class);
+		Assert.assertNotNull(postResponse);
+		Assert.assertNotNull(postResponse.getBody());
+		Assert.assertEquals(CLIENT_FULL_NAME, postResponse.getBody().getAccount().getClient().getName());
+		Assert.assertEquals(200, postResponse.getBody().getAmount(), 0.0);
+		Assert.assertEquals(800, postResponse.getBody().getAccount().getCurrentBalance(), 0.0);
+
+	}
+
+	@Test
+	/**
+	 * test failing make a withdrawal from an account US2
+	 */
+	public void testMakeAccountWithdrawalFail() {
+		// create New Client
+		Client clientToCreate = new Client();
+		clientToCreate.setName(CLIENT_FULL_NAME);
+		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
+				clientToCreate, Client.class);
+		// create New Account
+		Account accountToCreate = new Account();
+		// get the client created above
+		Client client = restTemplate
+				.getForObject(getRootUrl() + CLIENT_PATH + postResponseCreateClient.getBody().getId(), Client.class);
+		// set the account client
+		accountToCreate.setClient(client);
+		accountToCreate.setCurrentBalance(700);
+		ResponseEntity<Account> postResponseCreateAccount = restTemplate.postForEntity(getRootUrl() + ACCOUNT_PATH,
+				accountToCreate, Account.class);
+		// create New Transaction
+		Transaction trans = new Transaction();
+		trans.setTransactionDate(new Date());
+		// get the account created above
+		Account account = restTemplate.getForObject(
+				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
+		// set the transaction account
+		trans.setAccount(account);
+		trans.setTransactionType(TypeTransaction.withdrawal);
+		trans.setAmount(-500);
+		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, trans,
+				Transaction.class);
+		Assert.assertNotNull(postResponse);
+		Assert.assertNull(postResponse.getBody());
+	}
+	
 }
