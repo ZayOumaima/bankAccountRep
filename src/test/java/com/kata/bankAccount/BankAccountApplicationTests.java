@@ -3,8 +3,9 @@ package com.kata.bankAccount;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ class BankAccountApplicationTests {
 	private static final String ACCOUNT_PATH = "/account/";
 	private static final String TRANSACTION_PATH = "/transaction/";
 	private static final String ALL_TRANSACTION_PATH = TRANSACTION_PATH + "findAllByAccountID/";
+	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd-MM-yyyy");
 
 	private String getRootUrl() {
 		return "http://localhost:" + SERVER_PORT + "/kata/bankAccount";
@@ -118,7 +120,7 @@ class BankAccountApplicationTests {
 	/**
 	 * test make a deposit in an account with success US1
 	 */
-	public void testMakeAccountDepositSuccess() {
+	public void testMakeAccountDepositSuccess() throws ParseException {
 		// create New Client
 		Client clientToCreate = new Client(CLIENT_FULL_NAME);
 		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
@@ -134,7 +136,7 @@ class BankAccountApplicationTests {
 		Account account = restTemplate.getForObject(
 				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
 		// create New Transaction
-		Transaction trans = new Transaction(new Date(), TypeTransaction.deposit, 500, account);
+		Transaction trans = new Transaction(DATE_FORMATTER.parse(DATE_FORMATTER.format(new Date())), TypeTransaction.deposit, 500, account);
 
 		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, trans,
 				Transaction.class);
@@ -150,7 +152,7 @@ class BankAccountApplicationTests {
 	/**
 	 * test failing make a deposit in an account US1
 	 */
-	public void testMakeAccountDepositFail() {
+	public void testMakeAccountDepositFail() throws ParseException {
 		// create New Client
 		Client clientToCreate = new Client(CLIENT_FULL_NAME);
 		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
@@ -169,7 +171,7 @@ class BankAccountApplicationTests {
 		Account account = restTemplate.getForObject(
 				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
 		// create New Transaction
-		Transaction trans = new Transaction(new Date(), TypeTransaction.deposit, -500, account);
+		Transaction trans = new Transaction(DATE_FORMATTER.parse(DATE_FORMATTER.format(new Date())), TypeTransaction.deposit, -500, account);
 		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, trans,
 				Transaction.class);
 		Assert.assertNotNull(postResponse);
@@ -180,7 +182,7 @@ class BankAccountApplicationTests {
 	/**
 	 * test make a withdrawal from an account with success US2
 	 */
-	public void testMakeAccountWithdrawalSuccess() {
+	public void testMakeAccountWithdrawalSuccess() throws ParseException {
 		// create New Client
 		Client clientToCreate = new Client(CLIENT_FULL_NAME);
 		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
@@ -198,7 +200,7 @@ class BankAccountApplicationTests {
 		Account account = restTemplate.getForObject(
 				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
 		// create New Transaction
-		Transaction trans = new Transaction(new Date(), TypeTransaction.withdrawal, 200, account);
+		Transaction trans = new Transaction(DATE_FORMATTER.parse(DATE_FORMATTER.format(new Date())), TypeTransaction.withdrawal, 200, account);
 
 		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, trans,
 				Transaction.class);
@@ -214,7 +216,7 @@ class BankAccountApplicationTests {
 	/**
 	 * test failing make a withdrawal from an account US2
 	 */
-	public void testMakeAccountWithdrawalFail() {
+	public void testMakeAccountWithdrawalFail() throws ParseException {
 		// create New Client
 		Client clientToCreate = new Client(CLIENT_FULL_NAME);
 		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
@@ -231,7 +233,7 @@ class BankAccountApplicationTests {
 		Account account = restTemplate.getForObject(
 				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
 		// create New Transaction
-		Transaction trans = new Transaction(new Date(), TypeTransaction.withdrawal, -500, account);
+		Transaction trans = new Transaction(DATE_FORMATTER.parse(DATE_FORMATTER.format(new Date())), TypeTransaction.withdrawal, -500, account);
 
 		ResponseEntity<Transaction> postResponse = restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, trans,
 				Transaction.class);
@@ -243,7 +245,7 @@ class BankAccountApplicationTests {
 	/**
 	 * test failing make a withdrawal from an account US2
 	 */
-	public void testFindAllTransactionByAccountId() {
+	public void testFindAllTransactionByAccountId() throws ParseException {
 		// create New Client
 		Client clientToCreate = new Client(CLIENT_FULL_NAME);
 		ResponseEntity<Client> postResponseCreateClient = restTemplate.postForEntity(getRootUrl() + CLIENT_PATH,
@@ -262,17 +264,17 @@ class BankAccountApplicationTests {
 				getRootUrl() + ACCOUNT_PATH + postResponseCreateAccount.getBody().getIdAccount(), Account.class);
 	
 		// create first New Deposit Transaction
-		Transaction firstDepTrans = new Transaction(new Date("01/07/2020"), TypeTransaction.deposit, 800,
+		Transaction firstDepTrans = new Transaction(DATE_FORMATTER.parse("01-07-2020"), TypeTransaction.deposit, 800,
 				accountCreated);
 		restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, firstDepTrans, Transaction.class);
 		
 		// create Second New Deposit Transaction
-		Transaction secondDepTrans = new Transaction(new Date("01/08/2020"), TypeTransaction.deposit, 1200,
+		Transaction secondDepTrans = new Transaction(DATE_FORMATTER.parse("01-08-2020"), TypeTransaction.deposit, 1200,
 				accountCreated);
 		restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, secondDepTrans, Transaction.class);
 	
 		// create third New withdrawal Transaction
-		Transaction thirdWithdrawalTrans = new Transaction(new Date(), TypeTransaction.withdrawal, 1000,
+		Transaction thirdWithdrawalTrans = new Transaction(DATE_FORMATTER.parse(DATE_FORMATTER.format(new Date())), TypeTransaction.withdrawal, 1000,
 				accountCreated);
 		restTemplate.postForEntity(getRootUrl() + TRANSACTION_PATH, thirdWithdrawalTrans, Transaction.class);
 		
@@ -281,7 +283,7 @@ class BankAccountApplicationTests {
 		Transaction[] response = responseEntity.getBody();
 		Assert.assertNotNull(response);
 		Assert.assertEquals(3, response.length, 0.0);
-		Assert.assertEquals(new Date("01/07/2020"), response[0].getTransactionDate());
+		Assert.assertEquals(DATE_FORMATTER.parse("01-07-2020"), response[0].getTransactionDate());
 		Assert.assertEquals(800, response[0].getAmount(),0.0);
 		Assert.assertEquals(1700, response[0].getAccount().getCurrentBalance(), 0.0);
 		Assert.assertEquals(TypeTransaction.deposit, response[0].getTransactionType());
