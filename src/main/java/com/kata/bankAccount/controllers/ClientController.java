@@ -21,32 +21,41 @@ public class ClientController {
 	@Autowired
 	private ClientRepository clientRepository;
 
-
+	/**
+	 * create new client
+	 * 
+	 * @param newClient
+	 * @return
+	 * @throws Exception
+	 */
 	@PostMapping("/")
-	public Client createClient(@RequestBody Client newClient) {
-		Client createdClient = null;
-		try {
-			if (newClient == null) {
-				throw new Exception(ExceptionMessages.EMPTY_CLIENT_CREATION_ERROR);
-			}
-			createdClient = clientRepository.save(newClient);
-		} catch (Exception e) {
-			e.printStackTrace();
+	public Client createClient(@RequestBody Client newClient) throws Exception {
+
+		if (newClient == null) {
+			throw new Exception(ExceptionMessages.EMPTY_CLIENT_CREATION_ERROR);
 		}
+		Client createdClient = clientRepository.save(newClient);
+
 		return createdClient;
 	}
 
+	/**
+	 * get client by id
+	 * 
+	 * @param clientId
+	 * @return
+	 * @throws Exception
+	 */
 	@GetMapping("/{id}")
-	public ResponseEntity getClientById(@PathVariable(value = "id") Long clientId) {
-        if (clientId == null) {
-            return ResponseEntity.badRequest().body(ExceptionMessages.NULL_ID_CLIENT_RETRIEVE_ERROR);
-        }
-    	Client client = clientRepository.getOne(clientId);
-        if (client == null) {
-            return ResponseEntity.notFound().build();
-        }
- 
-	
+	public ResponseEntity getClientById(@PathVariable(value = "id") Long clientId) throws Exception {
+		if (clientId == null) {
+			return ResponseEntity.badRequest().body(ExceptionMessages.NULL_ID_CLIENT_RETRIEVE_ERROR);
+		}
+		Client client = clientRepository.getOne(clientId);
+		if (client == null) {
+			throw new Exception(ExceptionMessages.CLIENT_NOT_FOUND_ERROR);
+		}
+
 		return ResponseEntity.ok().body(client);
 	}
 }

@@ -30,6 +30,15 @@ public class Client implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "client")
 	List<Account> accounts;
 
+	public Client(String name) {
+		super();
+		this.name = name;
+	}
+
+	public Client() {
+		super();
+	}
+
 	public long getId() {
 		return id;
 	}

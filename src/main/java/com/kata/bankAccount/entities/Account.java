@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "account")
 public class Account implements Serializable{
@@ -43,12 +45,10 @@ public class Account implements Serializable{
 	}
 
 
-	public Account(long idAccount, Client client, double amount, List<Transaction> transactions) {
+	public Account(Client client, double amount) {
 		super();
-		this.idAccount = idAccount;
 		this.client = client;
 		this.currentBalance = amount;
-		this.transactions = transactions;
 	}
 
 
@@ -70,7 +70,7 @@ public class Account implements Serializable{
 	public void setClient(Client client) {
 		this.client = client;
 	}
-
+@JsonIgnore
 	public List<Transaction> getTransactions() {
 		return transactions;
 	}

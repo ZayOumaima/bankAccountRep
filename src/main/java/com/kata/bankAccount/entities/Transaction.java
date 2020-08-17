@@ -36,6 +36,20 @@ public class Transaction implements Serializable{
     @JoinColumn(name = "idAccount")
     private Account account;
 
+    
+	public Transaction(Date transactionDate, TypeTransaction transactionType, double amount, Account account) {
+		super();
+		this.transactionDate = transactionDate;
+		this.transactionType = transactionType;
+		this.amount = amount;
+		this.account = account;
+	}
+
+	public Transaction() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public long getIdTransaction() {
 		return idTransaction;
 	}

@@ -19,34 +19,45 @@ import com.kata.bankAccount.utils.ExceptionMessages;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AccountController {
 	@Autowired
-    private AccountRepository accountRepository;
-	
+	private AccountRepository accountRepository;
+
+	/**
+	 * create new account
+	 * 
+	 * @param newAccount
+	 * @return
+	 * @throws Exception
+	 */
 	@PostMapping("/")
-	public Account createAccount(@RequestBody Account newAccount) {
-		Account createdAccount=null;
-		try {
-			if (newAccount == null) {
-				throw new Exception(ExceptionMessages.EMPTY_ACCOUNT_CREATION_ERROR);
-			}else {
-				
-			}
-			 createdAccount = accountRepository.save(newAccount);
-		} catch (Exception e) {
-			e.printStackTrace();
+	public Account createAccount(@RequestBody Account newAccount) throws Exception {
+		if (newAccount == null) {
+			throw new Exception(ExceptionMessages.EMPTY_ACCOUNT_CREATION_ERROR);
+		} else {
+
 		}
+		Account createdAccount = accountRepository.save(newAccount);
+
 		return createdAccount;
 	}
+
+	/**
+	 * get account by id
+	 * 
+	 * @param accountId
+	 * @return
+	 * @throws Exception
+	 */
 	@GetMapping("/{id}")
-	public ResponseEntity getAccountById(@PathVariable(value = "id") Long accountId) {
-        if (accountId == null) {
-            return ResponseEntity.badRequest().body(ExceptionMessages.NULL_ID_ACCOUNT_RETRIEVE_ERROR);
-        }
-    	Account account = accountRepository.getOne(accountId);
-        if (account == null) {
-            return ResponseEntity.notFound().build();
-        }
- 
-	
+	public ResponseEntity getAccountById(@PathVariable(value = "id") Long accountId) throws Exception {
+		if (accountId == null) {
+			return ResponseEntity.badRequest().body(ExceptionMessages.NULL_ID_ACCOUNT_RETRIEVE_ERROR);
+		}
+		Account account = accountRepository.getOne(accountId);
+
+		if (account == null) {
+			throw new Exception(ExceptionMessages.ACCOUNT_NOT_FOUND_ERROR);
+		}
+
 		return ResponseEntity.ok().body(account);
 	}
 }
